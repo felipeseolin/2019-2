@@ -1,21 +1,28 @@
 package com.example.app.negocio.dominio;
 
+import com.example.app.apresentacao.ClienteModel;
 import com.example.app.negocio.excecao.NomeMenorCincoCaracteresException;
 import com.example.app.negocio.excecao.PaisNaoDefinidoException;
 import com.example.app.negocio.validador.FabricaValidadorTelefone;
 import com.example.app.negocio.validador.TelefoneNaoCorrespondePaisException;
+import com.example.app.persistencia.Cliente;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
 public class ClienteDTO {
     
-    private int id;
+    private Long id;
 
     @EqualsAndHashCode.Include
     private String nome;
@@ -72,5 +79,64 @@ public class ClienteDTO {
         
         else
             throw new TelefoneNaoCorrespondePaisException();
+    }
+
+    public static ClienteDTO DTOFromEntity(Cliente cliente) {
+        return ClienteDTO.builder()
+                .id(cliente.getId())
+                .nome(cliente.getNome())
+                .idade(cliente.getIdade())
+                .limiteCredito(cliente.getLimiteCredito())
+                .telefone(cliente.getTelefone())
+                .build();
+    }
+
+    public static Set<ClienteDTO> DTOsFromEntities(List<Cliente> clientes) {
+        var resultado = new HashSet<ClienteDTO>();
+
+        for(Cliente clienteAtual : clientes) {
+            resultado.add(ClienteDTO.DTOFromEntity(clienteAtual));
+        }
+
+        return resultado;
+    }
+
+    public static Cliente EntityFromDTO (ClienteDTO cliente) {
+        return Cliente.builder()
+                .id(cliente.getId())
+                .nome(cliente.getNome())
+                .idade(cliente.getIdade())
+                .telefone(cliente.getTelefone())
+                .limiteCredito(cliente.getLimiteCredito())
+                .build();
+    }
+
+    public static Set<ClienteModel> ModelsFromDTOs (Set<ClienteDTO> clientes) {
+        var resultado = new HashSet<ClienteModel>();
+
+        for (ClienteDTO clienteAtual: clientes)
+            resultado.add(ClienteDTO.ModelFromDTO(clienteAtual));
+
+        return resultado;
+    }
+
+    public static ClienteModel ModelFromDTO (ClienteDTO cliente) {
+        return ClienteModel.builder()
+                .id(cliente.getId())
+                .nome(cliente.getNome())
+                .telefone(cliente.getTelefone())
+                .limiteCredito(cliente.getLimiteCredito())
+                .idade(cliente.getIdade())
+                .build();
+    }
+
+    public static ClienteDTO DTOFromModel (ClienteModel cliente) {
+        return ClienteDTO.builder()
+                .id(cliente.getId())
+                .nome(cliente.getNome())
+                .idade(cliente.getIdade())
+                .telefone(cliente.getTelefone())
+                .limiteCredito(cliente.getLimiteCredito())
+                .build();
     }
 }
