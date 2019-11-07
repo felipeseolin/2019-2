@@ -26,4 +26,8 @@ public class PaisNegocio implements INegocio<PaisDTO> {
     public Set<PaisDTO> listar() {
         return PaisDTO.DTOsFromEntities(paisDAO.findAll());
     }
+
+    public PaisDTO findById(Long id) {
+        return PaisDTO.DTOFromEntity(paisDAO.findById(id));
+    }
 }
